@@ -27,18 +27,18 @@ export async function getTodos(): Promise<Todo[]> {
 }
 
 export async function getTodoContentById(id: number): Promise<string> {
-  const response = await fetch(`${BASE_URL}/${id}`);
+  const response = await fetch(`${BASE_URL}/todos/${id}`);
   const todoData = await response.json();
 
   return todoData.content;
 }
 
 export async function deleteTodoById(id: number) {
-  const response = await fetch(`${BASE_URL}/delete/${id}`);
+  const response = await fetch(`${BASE_URL}/todos/${id}`, {
+    method: "DELETE",
+  });
 
-  const result = await response.json();
-
-  return result;
+  return response.json();
 }
 
 type UpdateTodoDetail = {
@@ -49,10 +49,12 @@ type UpdateTodoDetail = {
 };
 
 export async function updateTodo(todo: UpdateTodoDetail) {
-  const response = await fetch(`${BASE_URL}/update/${JSON.stringify(todo)}`);
-  const result = await response.json();
-
-  return result;
+  const response = await fetch(`${BASE_URL}/todos/${todo.id}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(todo),
+  });
+  return response.json();
 }
 
 export async function addTodo(todo: TodoDetail) {
