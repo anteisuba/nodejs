@@ -1,3 +1,5 @@
 {
-  "editor.inlineSuggest.edits.showCollapsed": true
+  "editor.inlineSuggest.edits.showCollapsed": true,
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.preferences.importModuleSpecifierEnding": "js"
 }
