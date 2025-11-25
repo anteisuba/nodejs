@@ -1,5 +1,6 @@
 {
   "editor.inlineSuggest.edits.showCollapsed": true,
   "javascript.preferences.importModuleSpecifierEnding": "js",
-  "typescript.preferences.importModuleSpecifierEnding": "js"
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "prettier.requireConfig": true
 }
