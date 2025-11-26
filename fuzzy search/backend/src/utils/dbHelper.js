@@ -1,6 +1,4 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const databaseConfig = {
   database: process.env.DB_NAME,
@@ -10,7 +8,7 @@ const databaseConfig = {
   port: Number(process.env.DB_PORT),
 };
 
-console.log('DB CONFIG =>', databaseConfig); // ✅ 调试用：查看实际加载的配置
+// console.log(databaseConfig);
 
 const sequelize = new Sequelize(
   databaseConfig.database,
@@ -18,17 +16,16 @@ const sequelize = new Sequelize(
   databaseConfig.password,
   {
     host: databaseConfig.host,
-    port: databaseConfig.port,  // ✅ 加上端口！
+    // dialect: 'postgres',
     dialect: 'mysql',
-    logging: false,
   }
 );
 
 try {
   await sequelize.authenticate();
-  console.log('✅ Connection has been established successfully.');
+  console.log('Connection has been established successfully.');
 } catch (error) {
-  console.error('❌ Unable to connect to the database:', error.message);
+  console.error('Unable to connect to the database:', error);
 }
 
 export default sequelize;

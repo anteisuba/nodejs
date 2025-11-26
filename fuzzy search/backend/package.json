@@ -12,11 +12,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.12.3",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.44.1",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mysql2": "^3.14.1",
     "nodemon": "^3.1.10",

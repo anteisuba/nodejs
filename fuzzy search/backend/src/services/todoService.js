@@ -1,13 +1,18 @@
-import Todo from '../models/todoModel.js';
 import { Op } from 'sequelize';
+import Todo from '../models/todoModel.js';
+import sequelize from '../utils/dbHelper.js';
 
-export async function getAllTodos(offset, limit = 5, search = '') {
-  let titleFilter = '';
+export async function getAllTodos(offset, limit = 5, search) {
+  let titleFilter = {};
+
   if (search) {
     titleFilter = {
-      [Op.iLike]: `%${search}%`,
+      where: sequelize.where(sequelize.fn('lower', sequelize.col('title')), {
+        [Op.ilike]: `%${search.toLowerCase()}%`,
+      }),
     };
   }
+
   const todos = await Todo.findAll({
     offset,
     limit,
@@ -45,18 +50,16 @@ export async function updateTodo(updateTodo) {
   });
 }
 
-export async function countTodo(search = '') {
-  let titleFilter = '';
+export async function countTodo(search) {
+  let titleFilter = {};
+
   if (search) {
-    // where : {
-    //   titleFilter = {
-    //     [Op.iLike]: `%${search.toLowerCase()}%`,
-    //   };
-    // }
-    
-    where:sequelize.where(sequelize.fn('lower', sequelize.col('title')), {
-      [Op.like]: `%${search.toLowerCase()}%`,
-    })
+    titleFilter = {
+      where: sequelize.where(sequelize.fn('lower', sequelize.col('title')), {
+        [Op.ilike]: `%${search.toLowerCase()}%`,
+      }),
+    };
   }
+
   return await Todo.count(titleFilter);
 }

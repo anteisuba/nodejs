@@ -9,21 +9,14 @@ import {
 
 export async function getTodos(req, res) {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
+  const limit = req.query.limit || 5;
   const search = req.query.search || '';
 
   const offset = (page - 1) * limit;
 
   const todos = await getAllTodos(offset, limit, search);
 
-  const total = await countTodoApi(search); // ✅ 加上这行
-
-    return res.status(200).json({
-      page: Number(page),
-      limit: Number(limit),
-      total,
-      todos,
-    });
+  return res.status(200).json(todos);
 }
 
 export async function getTodoById(req, res) {
@@ -81,15 +74,11 @@ export async function updateTodo(req, res) {
 }
 
 export async function countTodo(req, res) {
+  const search = req.query.search;
 
-  const search = req.query.search || '';
-  console.log("req.query =", req.query);
-  console.log("req.params =", req.params);
-  console.log("req.search =", req.search);
   const todoCount = await countTodoApi(search);
 
   return res.status(200).json({
-    search: search,
     count: todoCount,
   });
 }
