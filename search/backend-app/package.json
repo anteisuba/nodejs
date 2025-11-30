@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "dotenvx run -- nodemon ./src/server.js",
+    "dev": "dotenvx run -- nodemon ./src/server.js | pino-pretty",
     "seed": "dotenvx run -- node ./src/scripts/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +22,7 @@
     "nodemon": "^3.1.10",
     "pg": "^8.16.0",
     "pg-hstore": "^2.3.4",
+    "pino": "^10.1.0",
     "sequelize": "^6.37.7"
   }
 }

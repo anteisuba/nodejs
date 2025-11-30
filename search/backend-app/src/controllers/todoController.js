@@ -8,8 +8,8 @@ import {
 } from '../services/todoService.js';
 
 export async function getTodos(req, res) {
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   const search = req.query.search || '';
 
   const offset = (page - 1) * limit;
@@ -18,12 +18,12 @@ export async function getTodos(req, res) {
 
   const total = await countTodoApi(search); // ✅ 加上这行
 
-    return res.status(200).json({
-      page: Number(page),
-      limit: Number(limit),
-      total,
-      todos,
-    });
+  return res.status(200).json({
+    page: Number(page),
+    limit: Number(limit),
+    total,
+    todos,
+  });
 }
 
 export async function getTodoById(req, res) {
