@@ -7,6 +7,10 @@ import {
   countTodo as countTodoApi,
 } from "../services/todoService.js";
 import Apperror from "../utils/Apperror.js";
+import {
+  sendNotFoundResponse,
+  sendSuccessResponse,
+} from "../utils/responseHelper.js";
 
 export async function getTodos(req, res) {
   const page = parseInt(req.query.page) || 1;
@@ -18,13 +22,13 @@ export async function getTodos(req, res) {
   const todos = await getAllTodos(offset, limit, search);
 
   const total = await countTodoApi(search); // ✅ 加上这行
-  next();
-  return res.status(200).json({
-    page: Number(page),
-    limit: Number(limit),
-    total,
-    todos,
-  });
+  // return res.status(200).json({
+  //   page: Number(page),
+  //   limit: Number(limit),
+  //   total,
+  //   todos,
+  // });
+  return sendSuccessResponse(res, todos);
 }
 
 export async function getTodoById(req, res) {
@@ -36,10 +40,10 @@ export async function getTodoById(req, res) {
   const todo = await getTodoByIdApi(req.params.todoId);
 
   if (todo) {
-    return res.status(200).json({ message: "Todo found", data: todo });
+    return sendSuccessResponse(res, todo);
   }
 
-  return res.status(404).json({ message: "404 Not Found" });
+  return sendNotFoundResponse(res);
 }
 
 export async function deleteTodoById(req, res) {
@@ -51,12 +55,9 @@ export async function deleteTodoById(req, res) {
 
   const deletedTodoNumber = await deleteTodoByIdApi(todoId);
   if (!deletedTodoNumber) {
-    res.status(404).json({ message: "Todo not found" });
+    return sendNotFoundResponse(res);
   }
-  return res.status(200).json({
-    message: "Todo deleted successfully",
-    data: deletedTodoNumber,
-  });
+  return sendSuccessResponse(res, deletedTodoNumber);
 }
 
 export async function createTodo(req, res) {
@@ -68,10 +69,7 @@ export async function createTodo(req, res) {
 
   try {
     const addedTodo = await createTodoApi(addTodo);
-    return res.status(200).json({
-      message: "Todo added successfully",
-      data: addedTodo,
-    });
+    return sendSuccessResponse(res, addedTodo);
   } catch (error) {
     console.log("error from controller =", error);
     throw new Apperror("The id ${addTodo.id} already exists", 400, error.name);
@@ -83,13 +81,10 @@ export async function updateTodo(req, res) {
 
   const updatedTodoEffect = await updateTodoApi(updateTodo);
   if (!updatedTodoEffect) {
-    res.status(404).json({ message: "Todo not found" });
+    return sendNotFoundResponse(res);
   }
 
-  return res.status(200).json({
-    message: "Todo updated successfully",
-    data: updatedTodoEffect,
-  });
+  return sendSuccessResponse(res, updatedTodoEffect);
 }
 
 export async function countTodo(req, res) {
@@ -99,8 +94,5 @@ export async function countTodo(req, res) {
   console.log("req.search =", req.search);
   const todoCount = await countTodoApi(search);
 
-  return res.status(200).json({
-    search: search,
-    data: todoCount,
-  });
+  return sendSuccessResponse(res, todoCount);
 }
