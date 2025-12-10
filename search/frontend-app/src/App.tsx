@@ -1,14 +1,16 @@
-import { Toast } from 'primereact/toast';
-import { DevTools } from 'jotai-devtools';
-import 'jotai-devtools/styles.css';
+import { Toast } from "primereact/toast";
+import { DevTools } from "jotai-devtools";
+import "jotai-devtools/styles.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import MenuBar from "./components/MenuBar";
 
-import MenuBar from './components/MenuBar';
-
-import { useToast } from './hooks/toast';
-import TodoView from './components/TodoView.tsx';
+import { useToast } from "./hooks/toast";
+import TodoView from "./components/TodoView.tsx";
 
 function App() {
   const { toast, showToast } = useToast();
@@ -21,6 +23,7 @@ function App() {
       {/* <DevTools /> */}
 
       <MenuBar />
+      <h1 style={{ color: "red" }}>HELLO APP</h1>
 
       <Toast ref={toast} />
 

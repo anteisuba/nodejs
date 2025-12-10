@@ -1,27 +1,32 @@
-import { Todo, TodoDetail } from '../types/Todo';
+import { Todo, TodoDetail } from "../types/Todo";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const PAGE_SIZE = import.meta.env.VITE_PAGE_SIZE;
 
 export async function getTodos(
   currentPage: number = 1,
-  searchText: string = ''
+  searchText: string = ""
 ): Promise<Todo[]> {
-  const searchTextParam = searchText ? `&search=${searchText}` : '';
+  const searchTextParam = searchText ? `&search=${searchText}` : "";
 
   const response = await fetch(
-    // `${BASE_URL}?page=${currentPage}&limit=${PAGE_SIZE}${searchTextParam}`
-    `${BASE_URL}?page=${currentPage}&limit=${PAGE_SIZE}`
+    `${BASE_URL}?page=${currentPage}&limit=${PAGE_SIZE}${searchTextParam}`
   );
-  const todoData = await response.json();
 
-  return todoData.map((todo: any) => {
-    return {
-      id: todo.id,
-      title: todo.title,
-      tag: todo.tag,
-    };
-  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch todos");
+  }
+
+  const json = await response.json();
+
+  // ✅ 拆掉 message，只把真正的数组给 React Query
+  const todos = json.data;
+
+  return todos.map((todo: any) => ({
+    id: todo.id,
+    title: todo.title,
+    tag: todo.tag,
+  }));
 }
 
 // export async function getTodos(): Promise<Todo[]> {
@@ -46,7 +51,7 @@ export async function getTodoContentById(id: number): Promise<string> {
 
 export async function deleteTodoById(id: number) {
   const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   const result = await response.json();
@@ -63,9 +68,9 @@ type UpdateTodo = {
 
 export async function updateTodo(todo: UpdateTodo) {
   const response = await fetch(BASE_URL, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(todo),
   });
@@ -76,9 +81,9 @@ export async function updateTodo(todo: UpdateTodo) {
 
 export async function addTodo(todo: TodoDetail) {
   const response = await fetch(BASE_URL, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(todo),
   });
@@ -88,7 +93,7 @@ export async function addTodo(todo: TodoDetail) {
 }
 
 export async function getTodoCount(searchText: string) {
-  const searchTextParam = searchText ? `?search=${searchText}` : '';
+  const searchTextParam = searchText ? `?search=${searchText}` : "";
 
   const response = await fetch(`${BASE_URL}/count${searchTextParam}`);
   const result = await response.json();
