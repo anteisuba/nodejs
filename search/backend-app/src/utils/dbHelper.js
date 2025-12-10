@@ -1,5 +1,7 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import { logger } from './loggerHelper.js';
+
 dotenv.config();
 
 const databaseConfig = {
@@ -19,7 +21,7 @@ const sequelize = new Sequelize(
   {
     host: databaseConfig.host,
     port: databaseConfig.port,  // ✅ 加上端口！
-    dialect: 'mysql',
+    dialect: 'postgres',
     logging: false,
   }
 );
@@ -28,7 +30,8 @@ try {
   await sequelize.authenticate();
   console.log('✅ Connection has been established successfully.');
 } catch (error) {
-  console.error('❌ Unable to connect to the database:', error.message);
+  logger.error(`❌ Unable to connect to the database: ${error.message}`);
+  throw error;
 }
 
 export default sequelize;

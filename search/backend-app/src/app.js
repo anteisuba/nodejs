@@ -1,26 +1,22 @@
-import express from 'express';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
+import express from "express";
+import cors from "cors";
 
-import todoRouter from './routes/todoRoute.js';
-import { pinoHttpMiddleware } from './utils/loggerHelper.js';
-
-
-const limiter = rateLimit({
-	windowMs: 1000, // 1 second
-	limit: 10, 
-	standardHeaders: 'draft-8', 
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-	ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
-	// store: ... , // Redis, Memcached, etc. See below.
-})
+import todoRouter from "./routes/todoRoute.js";
+import { pinoHttpMiddleware } from "./utils/loggerHelper.js";
+import globalErrorhandler from "./utils/globalErrorhandler.js";
+import rateLimiter from "./utils/rateLimiter.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(limiter);
-app.use(pinoHttpMiddleware);
-app.use('/v1', todoRouter);
+// ✅ 这里用已经创建好的 limiter 实例
+app.use("/v1", rateLimiter);
+
+// ✅ 业务路由
+app.use("/v1", todoRouter);
+
+// ✅ 全局错误处理放最后
+app.use(globalErrorhandler);
 
 export default app;

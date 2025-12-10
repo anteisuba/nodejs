@@ -5,19 +5,20 @@ import {
   createTodo as createTodoApi,
   updateTodo as updateTodoApi,
   countTodo as countTodoApi,
-} from '../services/todoService.js';
+} from "../services/todoService.js";
+import Apperror from "../utils/Apperror.js";
 
 export async function getTodos(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
-  const search = req.query.search || '';
+  const search = req.query.search || "";
 
   const offset = (page - 1) * limit;
 
   const todos = await getAllTodos(offset, limit, search);
 
   const total = await countTodoApi(search); // ✅ 加上这行
-
+  next();
   return res.status(200).json({
     page: Number(page),
     limit: Number(limit),
@@ -27,30 +28,34 @@ export async function getTodos(req, res) {
 }
 
 export async function getTodoById(req, res) {
-  if (!req.params.todoId) {
-    return res.status(400).send('todoId is required');
-  }
+  //if the todoid is missing,the request will be process by getTodos
+  // if (!req.params.todoId) {
+  //   return res.status(400).send("todoId is required");
+  // }
 
   const todo = await getTodoByIdApi(req.params.todoId);
 
   if (todo) {
-    return res.status(200).json(todo);
+    return res.status(200).json({ message: "Todo found", data: todo });
   }
 
-  return res.status(404).send('404 Not Found');
+  return res.status(404).json({ message: "404 Not Found" });
 }
 
 export async function deleteTodoById(req, res) {
   const todoId = req.params.todoId;
 
   if (!todoId) {
-    return res.status(400).send('todoId is required');
+    throw new Apperror(`the todoid is required`, 400, "bad request");
   }
 
-  await deleteTodoByIdApi(todoId);
-
+  const deletedTodoNumber = await deleteTodoByIdApi(todoId);
+  if (!deletedTodoNumber) {
+    res.status(404).json({ message: "Todo not found" });
+  }
   return res.status(200).json({
-    message: 'Todo deleted successfully',
+    message: "Todo deleted successfully",
+    data: deletedTodoNumber,
   });
 }
 
@@ -58,31 +63,37 @@ export async function createTodo(req, res) {
   const addTodo = req.body;
 
   if (!addTodo) {
-    return res.status(400).send('Bad request');
+    throw new Apperror("The id ${addTodo.id} already exists", 400, error.name);
   }
 
-  const addedTodo = await createTodoApi(addTodo);
-
-  return res.status(200).json({
-    message: 'Todo added successfully',
-    data: addedTodo,
-  });
+  try {
+    const addedTodo = await createTodoApi(addTodo);
+    return res.status(200).json({
+      message: "Todo added successfully",
+      data: addedTodo,
+    });
+  } catch (error) {
+    console.log("error from controller =", error);
+    throw new Apperror("The id ${addTodo.id} already exists", 400, error.name);
+  }
 }
 
 export async function updateTodo(req, res) {
   const updateTodo = req.body;
 
-  const updatedTodo = await updateTodoApi(updateTodo);
+  const updatedTodoEffect = await updateTodoApi(updateTodo);
+  if (!updatedTodoEffect) {
+    res.status(404).json({ message: "Todo not found" });
+  }
 
   return res.status(200).json({
-    message: 'Todo updated successfully',
-    data: updatedTodo,
+    message: "Todo updated successfully",
+    data: updatedTodoEffect,
   });
 }
 
 export async function countTodo(req, res) {
-
-  const search = req.query.search || '';
+  const search = req.query.search || "";
   console.log("req.query =", req.query);
   console.log("req.params =", req.params);
   console.log("req.search =", req.search);
@@ -90,6 +101,6 @@ export async function countTodo(req, res) {
 
   return res.status(200).json({
     search: search,
-    count: todoCount,
+    data: todoCount,
   });
 }
