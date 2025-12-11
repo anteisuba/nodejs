@@ -4,6 +4,9 @@ Web Page
 ![Architecture](search/backend-app/src/img/webpage.png)
 Database
 ![Architecture](search/backend-app/src/img/database.png)
+Auth_JWT_token
+![Architecture](search/backend-app/src/img/gettoken.png)
+![Architecture](search/backend-app/src/img/checktoken.png)
 
 # TODO 検索アプリ
 

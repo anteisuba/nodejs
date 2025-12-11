@@ -15,8 +15,8 @@ export async function createUser(req, res) {
     throw new Apperror(`Email and password are required`, 400, "Bad request");
   }
   const createUser = await createUserApi(email, password);
-
-  return sendSuccessResponse(res, createUser);
+  const token = await generateToken(email);
+  return sendSuccessResponse(res, token);
 }
 
 export async function login(req, res) {
@@ -31,6 +31,6 @@ export async function login(req, res) {
     });
   }
 
-  const token = generateToken(email);
+  const token = await generateToken(email);
   return sendSuccessResponse(res, token);
 }
